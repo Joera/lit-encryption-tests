@@ -1,0 +1,27 @@
+{
+  "name": "lit-encryption-demo",
+  "version": "1.0.0",
+  "description": "Demo application for Lit Protocol encryption/decryption",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/main.js",
+    "dev": "ts-node-esm src/main.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ethers5": "npm:ethers@^5.8.0",
+    "@lit-protocol/auth-helpers": "7.0.7",
+		"@lit-protocol/constants": "7.0.7",
+		"@lit-protocol/contracts-sdk": "7.0.7",
+		"@lit-protocol/encryption": "^7.0.10-alpha.0",
+		"@lit-protocol/lit-node-client": "7.0.7",
+		"@lit-protocol/types": "^7.0.10-alpha.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
+  }
+}
