@@ -1,24 +1,8 @@
-# Lit Protocol Encryption Demo
+Hi, i hav strong suspicion that evm contract conditions are not implemented for lit actions, the decryptAndCombine function specifically.
 
-This is a TypeScript application demonstrating encryption and decryption using Lit Protocol.
+In main.ts you can uncomment various functions to see what i am trying to achieve, and what works or doesn't work.
 
-## Setup
+npm i and then npm run start
+youl'll also need the .env. I can send those over. Its all testnet, but i dont want git guardian to get mad at me. 
 
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Run the application:
-```bash
-npm start  # Build and run
-# OR
-npm run dev  # Run in development mode with ts-node
-```
-
-## Features
-- TypeScript implementation
-- Basic encryption using Lit Protocol
-- Access control conditions demonstration
-- Symmetric key encryption/decryption
-- Type-safe implementation
+Any help would be appreciated. If you can confirm it is not implemented yet, could you tell me if its on the roadmap?
