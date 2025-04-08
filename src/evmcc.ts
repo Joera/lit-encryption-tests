@@ -3,6 +3,7 @@ import { publicationAbi, safeAbi } from "./abi.js";
 
 export const evmContractConditions = (safeAddress: string, publicationAddress: string) => [
     {
+        conditionType: "evmContract",
         contractAddress: publicationAddress,
         functionName: "canPublish",
         functionParams: [ safeAddress ],
@@ -16,6 +17,7 @@ export const evmContractConditions = (safeAddress: string, publicationAddress: s
     },
     { operator: "and" },
     {
+        conditionType: "evmContract",
         contractAddress: safeAddress,
         functionName: "isOwner",
         functionParams: [":userAddress"],
