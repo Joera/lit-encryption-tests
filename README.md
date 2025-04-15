@@ -3,14 +3,14 @@ Hi, I have a strong suspicion that evm contract conditions and/or unified contra
 I have created several functions that :
 
 on node:
-succesfully encrypt and decrypt with accessControlConditions
-succesfully encrypt and decrypt with evmContractConditions
-succesfully encrypt and decrypt with unifiedAccessControlConditions
+* succesfully encrypt and decrypt with accessControlConditions
+* succesfully encrypt and decrypt with evmContractConditions
+* succesfully encrypt and decrypt with unifiedAccessControlConditions
 
 within action:
-succesfully encrypt and decrypt with accessControlConditions
-fail with evmContractConditions
-fail with unifiedAccessControlConditions
+* succesfully encrypt and decrypt with accessControlConditions
+* fail with evmContractConditions
+* fail with unifiedAccessControlConditions
 
 I have also tried several other variations related to the naming of keys, but all no dice. 
 
