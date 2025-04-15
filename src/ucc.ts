@@ -1,17 +1,19 @@
 import { publicationAbi, safeAbi } from "./abi.js";
 
-
-export const evmContractConditions = (safeAddress: string, publicationAddress: string) => [
+export const unifiedContractConditions = (safeAddress: string, publicationAddress: string) => [
     {
         conditionType: "evmContract",
         contractAddress: publicationAddress,
+        // standardContractType: "",
+        // method: "canPublish",
+        // parameters: [ safeAddress ],
         functionName: "canPublish",
         functionParams: [ safeAddress ],
         functionAbi: publicationAbi[0],
         chain: "baseSepolia",
         returnValueTest: {
           key: "",
-          comparator: "=",
+          comparator: "=",  
           value: "true"
         }
     },
@@ -19,12 +21,15 @@ export const evmContractConditions = (safeAddress: string, publicationAddress: s
     {
         conditionType: "evmContract",
         contractAddress: safeAddress,
+        // standardContractType: "",
+        // method: "isOwner",
+        // parameters: [":userAddress"],
         functionName: "isOwner",
         functionParams: [":userAddress"],
         functionAbi: safeAbi[0],
         chain: "baseSepolia",
         returnValueTest: {
-          key: "",
+            key: "",
             comparator: "=",
             value: "true"
         }

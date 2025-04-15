@@ -8,6 +8,6 @@ export const accessControlConditionsAlwaysTrue = () => [
     returnValueTest: {
         comparator: '=',
         value: ':userAddress',
-    },
+        },
     }
 ];

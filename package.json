@@ -12,12 +12,12 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "ethers5": "npm:ethers@^5.8.0",
-    "@lit-protocol/auth-helpers": "7.0.7",
-		"@lit-protocol/constants": "7.0.7",
-		"@lit-protocol/contracts-sdk": "7.0.7",
-		"@lit-protocol/encryption": "^7.0.10-alpha.0",
-		"@lit-protocol/lit-node-client": "7.0.7",
-		"@lit-protocol/types": "^7.0.10-alpha.0"
+    "@lit-protocol/auth-helpers": "7.1.0",
+		"@lit-protocol/constants": "7.1.0",
+		"@lit-protocol/contracts-sdk": "7.1.0",
+		"@lit-protocol/encryption": "^7.1.0",
+		"@lit-protocol/lit-node-client": "7.1.0",
+		"@lit-protocol/types": "^7.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

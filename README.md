@@ -1,8 +1,22 @@
-Hi, I have a strong suspicion that evm contract conditions are not implemented for lit actions, the decryptAndCombine function specifically.
+Hi, I have a strong suspicion that evm contract conditions and/or unified contract conditions are not implemented for lit actions, the decryptAndCombine function specifically.
+
+I have created several functions that :
+
+on node:
+succesfully encrypt and decrypt with accessControlConditions
+succesfully encrypt and decrypt with evmContractConditions
+succesfully encrypt and decrypt with unifiedAccessControlConditions
+
+within action:
+succesfully encrypt and decrypt with accessControlConditions
+fail with evmContractConditions
+fail with unifiedAccessControlConditions
+
+I have also tried several other variations related to the naming of keys, but all no dice. 
 
 In main.ts you can uncomment various functions to see what I am trying to achieve, and what works or doesn't work.
 
 npm i and then npm run start
-You'll also need the .env. I can send those over. Its all testnet, but I dont want git guardian to get mad at me. 
 
-Any help would be appreciated. If you can confirm it is not implemented yet, could you tell me if its on the roadmap?
+
+

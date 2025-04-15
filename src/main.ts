@@ -9,8 +9,17 @@ import { nodeWithAccessControlConditionsCustomContract } from "./node_acc_custom
 import { publicationAbi, safeAbi } from "./abi.js";
 import { nodeWithAccessControlConditionsAlwaysTrue } from "./node_acc_always_true.js";
 import { actionWithACCAlwaysTrue } from "./action_acc_true.js";
+import { nodeWithUnifiedAccessControlConditions } from "./node_ucc_custom.js";
+import { pbkdf2 } from "crypto";
+import { actionWithUnifiedAccessControlConditions } from "./action_ucc.js";
 
-dotenv.config();
+const PK1 ="0xa7118b404bd1";
+const PK2 = "e62e4e4fba08f38e1";
+const PK3 ="fc8a1e7f9a4a94ff94e6";
+const PK4 ="f83e6783f250fb1";
+const AK1 ="DAfzjixY82ICdLCssh";
+const AK2 = "_dTQpoN0I2mthW"; 
+// dotenv.config();
 
 const client = new LitNodeClient({
     litNetwork: LIT_NETWORK.DatilDev,
@@ -18,8 +27,8 @@ const client = new LitNodeClient({
 });
 
 const litProvider = new ethers5.providers.JsonRpcProvider(LIT_RPC.CHRONICLE_YELLOWSTONE)
-const baseSepoliaProvider = new ethers5.providers.JsonRpcProvider(`https://base-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`)
-const signer = new ethers5.Wallet(process.env.PRIVATE_KEY || "", litProvider);
+const baseSepoliaProvider = new ethers5.providers.JsonRpcProvider(`https://base-sepolia.g.alchemy.com/v2/${AK1}${AK2}`)
+const signer = new ethers5.Wallet(PK1 + PK2 + PK3 + PK4, litProvider);
 await client.connect();
 
 const content = "That dress is green";
@@ -33,6 +42,7 @@ const publicationContract = new ethers5.Contract(publicationAddress, publication
 const isOwner = await safeContract.isOwner(signerAddress);
 const canPublish = await publicationContract.canPublish(safeAddress);
 
+
 // works as expected:
 // await nodeWithAccessControlConditionsAlwaysTrue(client, sessionSigs, content, safeAddress);
 
@@ -42,12 +52,20 @@ const canPublish = await publicationContract.canPublish(safeAddress);
 // works as expected with needed functionality
 // await nodeWithEvmContractConditions(client, sessionSigs, content, safeAddress, publicationAddress);
 
+// also works
+// await nodeWithUnifiedAccessControlConditions(client, sessionSigs, content, safeAddress, publicationAddress);
+
+//
 // works as expected:
 // await actionWithACCAlwaysTrue(client, sessionSigs, content, safeAddress);
 
 // errors, presumably because it expects access control conditions, not evm contract conditions:
 // TypeError: serde_v8 error: invalid type; expected: array, got: undefined
-await actionWithEvmContractConditions(client, sessionSigs, content, safeAddress, publicationAddress);
+// await actionWithEvmContractConditions(client, sessionSigs, content, safeAddress, publicationAddress);
+
+// errors, presumably because it expects access control conditions, not evm contract conditions:
+// TypeError: serde_v8 error: invalid type; expected: array, got: undefined
+await actionWithUnifiedAccessControlConditions(client, sessionSigs, content, safeAddress, publicationAddress);
 
 console.log('Is signer owner of safe:', isOwner);
 console.log('Can signer publish:', canPublish);
