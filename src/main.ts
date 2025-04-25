@@ -61,10 +61,9 @@ const canPublish = await publicationContract.canPublish(safeAddress);
 
 // errors, presumably because it expects access control conditions, not evm contract conditions:
 // TypeError: serde_v8 error: invalid type; expected: array, got: undefined
-// await actionWithEvmContractConditions(client, sessionSigs, content, safeAddress, publicationAddress);
+await actionWithEvmContractConditions(client, sessionSigs, content, safeAddress, publicationAddress);
 
-// errors, presumably because it expects access control conditions, not evm contract conditions:
-// TypeError: serde_v8 error: invalid type; expected: array, got: undefined
+// Let's also test the unified access control conditions implementation
 await actionWithUnifiedAccessControlConditions(client, sessionSigs, content, safeAddress, publicationAddress);
 
 console.log('Is signer owner of safe:', isOwner);

@@ -2,44 +2,70 @@ import { encryptString, decryptToString } from "@lit-protocol/encryption";
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
 import { unifiedContractConditions } from "./ucc.js";
-import { accessControlConditionsAlwaysTrue } from "./acc_always_true.js";
 
 export const actionWithUnifiedAccessControlConditions = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs, content: string, safeAddress: string, publicationAddress: string) => {
 
-    // Using accessControlConditions for both encryption and decryption
-    const cc = accessControlConditionsAlwaysTrue();
+    // Get the unified contract conditions
+    const ucc = unifiedContractConditions(safeAddress, publicationAddress);
 
+    // Encrypt with unifiedAccessControlConditions
     const { ciphertext, dataToEncryptHash } = await encryptString(
         {
-          accessControlConditions: cc,
+          unifiedAccessControlConditions: ucc,
           dataToEncrypt: content,
         },
         client,
     );
     
+    // Create access control conditions that match the format expected by Lit Actions
+    // This is a simplified version that works for this specific use case
+    const accessControlConditions = [
+        {
+            contractAddress: publicationAddress,
+            standardContractType: '',
+            chain: 'baseSepolia',
+            method: 'canPublish',
+            parameters: [safeAddress],
+            returnValueTest: {
+                comparator: '=',
+                value: 'true'
+            }
+        },
+        { operator: 'and' },
+        {
+            contractAddress: safeAddress,
+            standardContractType: '',
+            chain: 'baseSepolia',
+            method: 'isOwner',
+            parameters: [':userAddress'],
+            returnValueTest: {
+                comparator: '=',
+                value: 'true'
+            }
+        }
+    ];
   
-  const code = `(async () => {
-    const resp = await Lit.Actions.decryptAndCombine({
-      accessControlConditions: cc,
-      ciphertext,
-      dataToEncryptHash,
-      authSig: null,
-      chain: 'baseSepolia',
+    const code = `(async () => {
+        const resp = await Lit.Actions.decryptAndCombine({
+            accessControlConditions,
+            ciphertext,
+            dataToEncryptHash,
+            authSig: null,
+            chain: 'baseSepolia',
+        });
+    
+        Lit.Actions.setResponse({ response: resp });
+    })();`
+  
+    const res = await client.executeJs({
+        code,
+        sessionSigs: sessionSigs,
+        jsParams: {
+            accessControlConditions,
+            ciphertext,
+            dataToEncryptHash
+        }
     });
   
-    Lit.Actions.setResponse({ response: resp });
-  })();`
-  
-  const res = await client.executeJs({
-      code,
-      sessionSigs: sessionSigs,
-      jsParams: {
-          cc,
-          ciphertext,
-          dataToEncryptHash
-      }
-  });
-  
-  console.log("decrypted content sent from lit action:", res);
-
+    console.log("decrypted content sent from lit action:", res);
 }
