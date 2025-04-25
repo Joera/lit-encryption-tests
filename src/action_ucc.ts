@@ -1,16 +1,17 @@
-
 import { encryptString, decryptToString } from "@lit-protocol/encryption";
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
 import { unifiedContractConditions } from "./ucc.js";
+import { accessControlConditionsAlwaysTrue } from "./acc_always_true.js";
 
 export const actionWithUnifiedAccessControlConditions = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs, content: string, safeAddress: string, publicationAddress: string) => {
 
-    const ucc = unifiedContractConditions(safeAddress, publicationAddress);
+    // Using accessControlConditions for both encryption and decryption
+    const cc = accessControlConditionsAlwaysTrue();
 
     const { ciphertext, dataToEncryptHash } = await encryptString(
         {
-          unifiedAccessControlConditions: ucc,
+          accessControlConditions: cc,
           dataToEncrypt: content,
         },
         client,
@@ -19,7 +20,7 @@ export const actionWithUnifiedAccessControlConditions = async (client: LitNodeCl
   
   const code = `(async () => {
     const resp = await Lit.Actions.decryptAndCombine({
-      unifiedAccessControlConditions: ucc,
+      accessControlConditions: cc,
       ciphertext,
       dataToEncryptHash,
       authSig: null,
@@ -31,9 +32,9 @@ export const actionWithUnifiedAccessControlConditions = async (client: LitNodeCl
   
   const res = await client.executeJs({
       code,
-      sessionSigs: sessionSigs, // your session
+      sessionSigs: sessionSigs,
       jsParams: {
-          ucc,
+          cc,
           ciphertext,
           dataToEncryptHash
       }

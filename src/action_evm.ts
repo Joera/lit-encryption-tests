@@ -1,7 +1,5 @@
-
 import { createSessionSignatures } from "./session.js";
 import { encryptString, decryptToString } from "@lit-protocol/encryption";
-import { evmContractConditions } from "./evmcc.js";
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
 import { accessControlConditionsAlwaysTrue } from "./acc_always_true.js";
@@ -9,14 +7,12 @@ import { unifiedContractConditions } from "./ucc.js";
 
 export const actionWithEvmContractConditions = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs, content: string, safeAddress: string, publicationAddress: string) => {
 
-    // const acc = accessControlConditionsAlwaysTrue();
-    const ecc = evmContractConditions(safeAddress, publicationAddress);
+    const cc = accessControlConditionsAlwaysTrue();
     // const ucc = unifiedContractConditions(safeAddress, publicationAddress);
 
     const { ciphertext, dataToEncryptHash } = await encryptString(
         {
-          //unifiedAccessControlConditions: ecc,
-          evmContractConditions: ecc,
+          accessControlConditions: cc,
           dataToEncrypt: content,
         },
         client,
@@ -25,7 +21,7 @@ export const actionWithEvmContractConditions = async (client: LitNodeClient | IL
   
   const code = `(async () => {
     const resp = await Lit.Actions.decryptAndCombine({
-      evmContractConditions: ecc,
+      accessControlConditions: cc,
       ciphertext,
       dataToEncryptHash,
       authSig: null,
@@ -37,9 +33,9 @@ export const actionWithEvmContractConditions = async (client: LitNodeClient | IL
   
   const res = await client.executeJs({
       code,
-      sessionSigs: sessionSigs, // your session
+      sessionSigs: sessionSigs,
       jsParams: {
-          ecc,
+          cc,
           ciphertext,
           dataToEncryptHash
       }
