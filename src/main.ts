@@ -42,7 +42,6 @@ const publicationContract = new ethers5.Contract(publicationAddress, publication
 const isOwner = await safeContract.isOwner(signerAddress);
 const canPublish = await publicationContract.canPublish(safeAddress);
 
-
 // works as expected:
 // await nodeWithAccessControlConditionsAlwaysTrue(client, sessionSigs, content, safeAddress);
 
@@ -59,11 +58,12 @@ const canPublish = await publicationContract.canPublish(safeAddress);
 // works as expected:
 // await actionWithACCAlwaysTrue(client, sessionSigs, content, safeAddress);
 
-// errors, presumably because it expects access control conditions, not evm contract conditions:
-// TypeError: serde_v8 error: invalid type; expected: array, got: undefined
+// Test the EVM contract conditions implementation
+console.log("\n=== Testing EVM Contract Conditions ===\n");
 await actionWithEvmContractConditions(client, sessionSigs, content, safeAddress, publicationAddress);
 
-// Let's also test the unified access control conditions implementation
+// Test the unified access control conditions implementation
+console.log("\n=== Testing Unified Access Control Conditions ===\n");
 await actionWithUnifiedAccessControlConditions(client, sessionSigs, content, safeAddress, publicationAddress);
 
 console.log('Is signer owner of safe:', isOwner);

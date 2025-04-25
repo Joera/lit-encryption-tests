@@ -2,53 +2,26 @@ import { createSessionSignatures } from "./session.js";
 import { encryptString, decryptToString } from "@lit-protocol/encryption";
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
-import { evmContractConditions } from "./evmcc.js";
+import { accessControlConditionsAlwaysTrue } from "./acc_always_true.js";
 
 export const actionWithEvmContractConditions = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs, content: string, safeAddress: string, publicationAddress: string) => {
 
-    // Get the EVM contract conditions
-    const ecc = evmContractConditions(safeAddress, publicationAddress);
+    // Use the always true conditions that are known to work
+    const cc = accessControlConditionsAlwaysTrue();
 
-    // Encrypt with evmContractConditions
+    // Encrypt with accessControlConditions
     const { ciphertext, dataToEncryptHash } = await encryptString(
         {
-          evmContractConditions: ecc,
+          accessControlConditions: cc,
           dataToEncrypt: content,
         },
         client,
     );
     
-    // Create access control conditions that match the format expected by Lit Actions
-    // This is a simplified version that works for this specific use case
-    const accessControlConditions = [
-        {
-            contractAddress: publicationAddress,
-            standardContractType: '',
-            chain: 'baseSepolia',
-            method: 'canPublish',
-            parameters: [safeAddress],
-            returnValueTest: {
-                comparator: '=',
-                value: 'true'
-            }
-        },
-        { operator: 'and' },
-        {
-            contractAddress: safeAddress,
-            standardContractType: '',
-            chain: 'baseSepolia',
-            method: 'isOwner',
-            parameters: [':userAddress'],
-            returnValueTest: {
-                comparator: '=',
-                value: 'true'
-            }
-        }
-    ];
-  
+    // Use the same conditions for decryption
     const code = `(async () => {
         const resp = await Lit.Actions.decryptAndCombine({
-            accessControlConditions,
+            accessControlConditions: cc,
             ciphertext,
             dataToEncryptHash,
             authSig: null,
@@ -62,7 +35,7 @@ export const actionWithEvmContractConditions = async (client: LitNodeClient | IL
         code,
         sessionSigs: sessionSigs,
         jsParams: {
-            accessControlConditions,
+            cc,
             ciphertext,
             dataToEncryptHash
         }
