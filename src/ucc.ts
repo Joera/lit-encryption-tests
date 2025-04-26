@@ -4,11 +4,8 @@ export const unifiedContractConditions = (safeAddress: string, publicationAddres
     {
         conditionType: "evmContract",
         contractAddress: publicationAddress,
-        // standardContractType: "",
-        // method: "canPublish",
-        // parameters: [ safeAddress ],
         functionName: "canPublish",
-        functionParams: [ safeAddress ],
+        functionParams: [safeAddress],
         functionAbi: publicationAbi[0],
         chain: "baseSepolia",
         returnValueTest: {
@@ -17,13 +14,10 @@ export const unifiedContractConditions = (safeAddress: string, publicationAddres
           value: "true"
         }
     },
-    { operator: "and" },
+    {operator: "and"},
     {
         conditionType: "evmContract",
         contractAddress: safeAddress,
-        // standardContractType: "",
-        // method: "isOwner",
-        // parameters: [":userAddress"],
         functionName: "isOwner",
         functionParams: [":userAddress"],
         functionAbi: safeAbi[0],

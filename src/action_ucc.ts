@@ -19,7 +19,7 @@ export const actionWithUnifiedAccessControlConditions = async (client: LitNodeCl
   
   const code = `(async () => {
     const resp = await Lit.Actions.decryptAndCombine({
-      unifiedAccessControlConditions: ucc,
+      accessControlConditions: ucc,
       ciphertext,
       dataToEncryptHash,
       authSig: null,
@@ -28,7 +28,6 @@ export const actionWithUnifiedAccessControlConditions = async (client: LitNodeCl
   
     Lit.Actions.setResponse({ response: resp });
   })();`
-  
   const res = await client.executeJs({
       code,
       sessionSigs: sessionSigs, // your session
@@ -39,6 +38,6 @@ export const actionWithUnifiedAccessControlConditions = async (client: LitNodeCl
       }
   });
   
-  console.log("decrypted content sent from lit action:", res);
+console.log("decrypted content sent from lit action:", res);
 
 }
