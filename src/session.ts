@@ -4,7 +4,7 @@ import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { ethers, Wallet } from "ethers5"; 
 import { AuthSig, SessionSigs } from "@lit-protocol/types";
 
-export const createSessionSignatures = async (client: LitNodeClient, signer: Wallet, safeAddress: string): Promise<SessionSigs> => {
+export const createSessionSignatures = async (client: LitNodeClient, signer: Wallet): Promise<SessionSigs> => {
 
     const resourceAbilityRequests : any = [
         {
@@ -15,7 +15,7 @@ export const createSessionSignatures = async (client: LitNodeClient, signer: Wal
 
     const sigs = await client.getSessionSigs({
         chain: "ethereum",
-        expiration: new Date(Date.now() + 1000 * 60 * 10).toISOString(), // 10 minutes
+        expiration: new Date(Date.now() + 1000 * 60 * 60).toISOString(), // 10 minutes
         resourceAbilityRequests,
         authNeededCallback: async ({
             uri,
