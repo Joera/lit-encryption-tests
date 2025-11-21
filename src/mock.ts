@@ -1,15 +1,5 @@
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
-import { fetchByQuery } from './lens.factory.js';
-import { decrypt } from './decrypt.js';
-import { _collections } from './mock.js';
-
-export const runAction = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs) => {
-
-  const publicationModule = "0xe0b8658be3b91879A187752EbEec620e3eEF4140"
-  const authorSafeAddress = "0x04660132323Fe65C5BaF9107Cfe8a941386b4EAF"
-
-  const posts = [
+export const _collections = JSON.stringify({
+  "posts": [
     {
       "id": "40562519930711800002437190761203007696652774457975046221921023827422170191994",
       "author": "0x60128b8f7c708Db46EA3F8D06932D6E621978072",
@@ -33,38 +23,42 @@ export const runAction = async (client: LitNodeClient | ILitNodeClient, sessionS
       "creationDate": "1763024996",
       "modifiedDate": "1763384870",
       "tags": ["block001--s2s"]
-    }
+    },
+    // {
+    //   "id": "40255038220314795022404003530460736335084480480965257555859155696237091809234",
+    //   "author": "0x60128b8f7c708Db46EA3F8D06932D6E621978072",
+    //   "content": "{\"ciphertext\":\"t0MzzKc/uiAClHcS9OoEEBC07koYj9fkNl0wHDZzr+F7PtrRfteVnMOO0nULsphtIv+4TAqzFbcO58q5DJ5Tjfht7IktaH7bFQA//5dzRqZcblbgiLBS7+k5Cu1zGcOiK6tGKeSRhUGPmJS66iU8l2rGmrxkPieNOE6DvSexhJxpQOpGa9JsCq38FC00up2Cthe8OMdCP/7bv6acl653q2BG1j+EiDFwN72ObN0C\",\"dataToEncryptHash\":\"46c2810f7987a06d81c2e02116eeaf9b052c519cb9d3e286986776ceb9db73a7\"}",
+    //   "locale": "nl",
+    //   "parent": "0",
+    //   "position": "0",
+    //   "postType": "page",
+    //   "creationDate": "1763383912",
+    //   "modifiedDate": "1763384309",
+    //   "tags": ["block001--s2s"]
+    // },
+    // {
+    //   "id": "90702956949807758490707192938082902644913592275082356361549260928213339228489",
+    //   "author": "0x60128b8f7c708Db46EA3F8D06932D6E621978072",
+    //   "content": "{\"ciphertext\":\"ixIbxhGMXqWqw6ZrUtFtafCajAKvrCpBHJk10Fzgn05ptxEp4pygq5pGC8NqKgkahicDSsWC58Ppdh9HETaw5LOWnhCuxwoEJb8oNw+5f59lpMKtvE3Ecm13eR8V5e+wR3+jcgHUDyVAssOfHBL+YeAOvTM/WvD4BRwW2X7RurY3BxqNQRkNddhZqpwyMVBA4pkL0C62Le3BLDf5iYOmqa5RrJVH2JvHHAkk1kk+5xELeipgBzsC\",\"dataToEncryptHash\":\"81500387e52a6a2e15c018246ccb28c58b7585135239f1ac218661723d5970a2\"}",
+    //   "locale": "nl",
+    //   "parent": "0",
+    //   "position": "0",
+    //   "postType": "homepage",
+    //   "creationDate": "1763024996",
+    //   "modifiedDate": "1763382085",
+    //   "tags": ["block001--s2s"]
+    // },
+    // {
+    //   "id": "54448954727229358281909069259067375869922783170982400905953080041361301566647",
+    //   "author": "0x60128b8f7c708Db46EA3F8D06932D6E621978072",
+    //   "content": "{\"ciphertext\":\"lfTkjbdLKMUm44apcecpSEQiCyoIcKYqDJjTyta2raI97mF7bhtmOMU0yImyJ7O7EzZcS6Fkhp6nZG7fbbi0lihZM2BXI5is80zphD0hW+Fgf+CYTAghOpBZVwxhe6ZwvhnlS8KEk6sZ37zWMgnv9Tc4fddJ3kCzFmZAkh+mbi8cYSQXQ3yzBWYiJ+b/IUBOMnxRuW0iTKeuQaArLXDI5B0jvxXpmSAuF3sCRyAdABoTAg==\",\"dataToEncryptHash\":\"555773893a426165719055ad5261295de620871ea9e71ebfce0c2dbf355a8349\"}",
+    //   "locale": "nl",
+    //   "parent": "0",
+    //   "position": "0",
+    //   "postType": "post",
+    //   "creationDate": "1763024996",
+    //   "modifiedDate": "1763215001",
+    //   "tags": ["block001--s2s"]
+    // }
   ]
-  
-  const code = `(async () => {
-    const fetchByQuery = ${fetchByQuery.toString()};
-    const decrypt = ${decrypt.toString()};
-    const posts = ${JSON.stringify(posts)}
-
-    let decrypted = [];
-
-    for (let result of posts) {
-          const d = await decrypt(result, "${publicationModule}", "${authorSafeAddress}");
-          if (d != undefined) {
-                decrypted.push(d);
-          }
-          // await new Promise(resolve => setTimeout(resolve, index * 1000));
-    };
-
-    let titles = decrypted.map( d => d === null ? null : d.title);
-
-    console.log(titles);
-
-    Lit.Actions.setResponse({ response: JSON.stringify({ titles }) });
-
-  })();`;
-  
-  const res = await client.executeJs({
-      code: code, // Pass the string directly, not JSON.stringify
-      sessionSigs: sessionSigs,
-      jsParams: {}
-  });
-  
-  console.log("result from lit action:", res);
-
-}
+});

@@ -122,5 +122,14 @@ export const decrypt = async (
       chain: "base",
     };
 
-    return await Lit.Actions.decryptAndCombine(decryptionParams);
+    let decrypted; 
+
+    try {
+        decrypted = JSON.parse(await Lit.Actions.decryptAndCombine(decryptionParams));
+    } catch (error) {
+        console.log("failed to decrypt", item.id)
+        decrypted = undefined;
+    }
+
+    return decrypted
 };
