@@ -1,7 +1,7 @@
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
 import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
 import { fetchByQuery } from './lens.factory.js';
-import { decryptAndMerge } from './decrypt.js'
+import { decrypt } from './decrypt.js'
 
 export const runAction = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs) => {
 
@@ -12,29 +12,25 @@ export const runAction = async (client: LitNodeClient | ILitNodeClient, sessionS
   // The code must be a STRING, not executed JavaScript
   const code = `(async () => {
     const fetchByQuery = ${fetchByQuery.toString()};
-    const decryptAndMerge = ${decryptAndMerge.toString()};
+    const decrypt = ${decrypt.toString()};
 
     let results = await fetchByQuery({ 
       "feedAddress": "0x5a5Cc3f032A5c4dE76aE07b8ED188376f109f638"
     });
 
-    console.log(results)
-
     results = results.filter( r => r.attributes.postType == 'post');
-
-    results = results.slice(0,1)
-
     console.log("count", results.length)
 
-    results = await Promise.all(
-        results.map(async (item) => {
-            return await decryptAndMerge(item, "${publicationModule}", "${authorSafeAddress}");
-        })
-      );
-  
-    console.log(results);
+    let decrypted = [];
 
-    Lit.Actions.setResponse({ response: JSON.stringify(results) });
+    for (let result of results) {
+          const d = await decrypt(result, "${publicationModule}", "${authorSafeAddress}");
+          decrypted.push(d);
+    };
+
+    console.log(decrypted.map( r => r.title))
+
+    Lit.Actions.setResponse({ response: JSON.stringify(decrypted) });
   })();`;
   
   const res = await client.executeJs({

@@ -2,7 +2,7 @@ declare global {
     const Lit: any;
 }
 
-export const decryptAndMerge = async (
+export const decrypt = async (
   item: any,
   publicationModule: string,
   authorSafeAddress: string,
@@ -112,27 +112,15 @@ export const decryptAndMerge = async (
 
     const ucc = canRead(item.id, authorSafeAddress, publicationModule);
 
+    const content = JSON.parse(item.content)
+
     const decryptionParams = {
       accessControlConditions: ucc,
-      ciphertext: item.ciphertext,
-      dataToEncryptHash: item.dataToEncryptHash,
+      ciphertext: content.ciphertext,
+      dataToEncryptHash: content.dataToEncryptHash,
       authSig: null,
       chain: "base",
     };
 
-    const decrypted = await Lit.Actions.decryptAndCombine(decryptionParams);
-
-    if (!decrypted) return undefined;
-    const decryptedContent = JSON.parse(decrypted);
-
-    delete item.content;
-
-    return {
-        ...item,
-        base: decryptedContent.base || undefined,
-        content: decryptedContent.content,
-        title: decryptedContent.title,
-        slug: decryptedContent.slug,
-        custom: JSON.parse(decryptedContent.custom || "{}") || {},
-    };
+    return await Lit.Actions.decryptAndCombine(decryptionParams);
 };

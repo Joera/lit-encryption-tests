@@ -1,43 +1,66 @@
-import { LitActionResource, createSiweMessage, generateAuthSig } from "@lit-protocol/auth-helpers";
+import { LitPKPResource, LitActionResource, createSiweMessageWithRecaps, generateAuthSig, LitAccessControlConditionResource } from "@lit-protocol/auth-helpers";
 import { LIT_ABILITY } from "@lit-protocol/constants";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import { ethers, Wallet } from "ethers5"; 
-import { AuthSig, SessionSigs } from "@lit-protocol/types";
+import fs from "fs";
+import path from "path";
 
-export const createSessionSignatures = async (client: LitNodeClient, signer: Wallet): Promise<SessionSigs> => {
+export const createSession = async (capacityTokenId: string, litNodeClient: any, ethersWallet:  any, index:  number) => {
+  
+    const { capacityDelegationAuthSig } =
+        await litNodeClient.createCapacityDelegationAuthSig({
+          dAppOwnerWallet: ethersWallet,
+          capacityTokenId,
+          delegateeAddresses: [ethersWallet.address],
+          uses: "100",
+        });
 
-    const resourceAbilityRequests : any = [
-        {
+    const sessionSignatures = await litNodeClient.getSessionSigs({
+        chain: "yellowstone",
+        capabilityAuthSigs: [capacityDelegationAuthSig],
+        expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // 24 hours
+        resourceAbilityRequests: [
+            {
+            resource: new LitPKPResource("*"),
+            ability: LIT_ABILITY.PKPSigning,
+            },
+            {
             resource: new LitActionResource("*"),
             ability: LIT_ABILITY.LitActionExecution,
-        }
-    ];
-
-    const sigs = await client.getSessionSigs({
-        chain: "ethereum",
-        expiration: new Date(Date.now() + 1000 * 60 * 60).toISOString(), // 10 minutes
-        resourceAbilityRequests,
+            },
+            {
+            resource: new LitAccessControlConditionResource("*"),
+            ability: LIT_ABILITY.AccessControlConditionDecryption,
+            },
+        ],
         authNeededCallback: async ({
-            uri,
-            expiration,
             resourceAbilityRequests,
-        }) => {
-        const toSign = await createSiweMessage({
-            uri,
             expiration,
-            resources: resourceAbilityRequests,
-            walletAddress: await signer.getAddress(),
-            nonce: await client.getLatestBlockhash(),
-            litNodeClient: client,
-        });
-        
-    
-        return await generateAuthSig({
-            signer: signer,
-            toSign,
-        });
-        },
-    });
+            uri,
+        }: {
+            resourceAbilityRequests?: any[];
+            expiration?: string;
+            uri?: string;
+        }) => {
+            const toSign = await createSiweMessageWithRecaps({
+            uri: uri!,
+            expiration: expiration!,
+            resources: resourceAbilityRequests!,
+            walletAddress: ethersWallet.address,
+            nonce: await litNodeClient.getLatestBlockhash(),
+            litNodeClient,
+            });
 
-    return sigs;
+            return await generateAuthSig({
+            signer: ethersWallet,
+            toSign,
+            });
+        },
+        });
+
+    return sessionSignatures;
+
+    // fs.writeFileSync(
+    //     path.join('sessions', `${index}.json`),
+    //     JSON.stringify(sessionSignatures, null, 2)
+    // );
 }
+  
