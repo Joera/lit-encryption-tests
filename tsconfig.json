@@ -1,19 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "strict": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "skipLibCheck": true
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "esModuleInterop": true
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
-  },
-  "include": ["src/**/*","src/*"],
-  "exclude": ["node_modules", "dist"]
+  }
 }

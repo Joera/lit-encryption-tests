@@ -1,66 +1,35 @@
-import { LitPKPResource, LitActionResource, createSiweMessageWithRecaps, generateAuthSig, LitAccessControlConditionResource } from "@lit-protocol/auth-helpers";
-import { LIT_ABILITY } from "@lit-protocol/constants";
-import fs from "fs";
-import path from "path";
+import { Account } from "viem/accounts";
+import { createAuthManager, storagePlugins, ViemAccountAuthenticator } from "@lit-protocol/auth"
 
-export const createSession = async (capacityTokenId: string, litNodeClient: any, ethersWallet:  any, index:  number) => {
-  
-    const { capacityDelegationAuthSig } =
-        await litNodeClient.createCapacityDelegationAuthSig({
-          dAppOwnerWallet: ethersWallet,
-          capacityTokenId,
-          delegateeAddresses: [ethersWallet.address],
-          uses: "100",
+export const createAuthContext = async (client: any, account: Account)  => {
+
+        if (account == undefined) throw 'lit client not ready';
+        
+        const authData = await ViemAccountAuthenticator.authenticate(account);
+    
+        const authManager = createAuthManager({
+            storage: storagePlugins.localStorageNode({
+                appName: "s3ntiment",
+                networkName: "naga-test",
+                storagePath: "./lit_auth"
+            }),
         });
 
-    const sessionSignatures = await litNodeClient.getSessionSigs({
-        chain: "yellowstone",
-        capabilityAuthSigs: [capacityDelegationAuthSig],
-        expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // 24 hours
-        resourceAbilityRequests: [
-            {
-            resource: new LitPKPResource("*"),
-            ability: LIT_ABILITY.PKPSigning,
+        const authContext = await authManager.createEoaAuthContext({
+            config: {
+                account: account,
             },
-            {
-            resource: new LitActionResource("*"),
-            ability: LIT_ABILITY.LitActionExecution,
+            authConfig: {
+                domain: "localhost",
+                statement: "Decrypt test data",
+                expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+                resources: [
+                ["access-control-condition-decryption", "*"],
+                ["lit-action-execution", "*"],
+                ],
             },
-            {
-            resource: new LitAccessControlConditionResource("*"),
-            ability: LIT_ABILITY.AccessControlConditionDecryption,
-            },
-        ],
-        authNeededCallback: async ({
-            resourceAbilityRequests,
-            expiration,
-            uri,
-        }: {
-            resourceAbilityRequests?: any[];
-            expiration?: string;
-            uri?: string;
-        }) => {
-            const toSign = await createSiweMessageWithRecaps({
-            uri: uri!,
-            expiration: expiration!,
-            resources: resourceAbilityRequests!,
-            walletAddress: ethersWallet.address,
-            nonce: await litNodeClient.getLatestBlockhash(),
-            litNodeClient,
-            });
-
-            return await generateAuthSig({
-            signer: ethersWallet,
-            toSign,
-            });
-        },
+            litClient: client
         });
 
-    return sessionSignatures;
-
-    // fs.writeFileSync(
-    //     path.join('sessions', `${index}.json`),
-    //     JSON.stringify(sessionSignatures, null, 2)
-    // );
-}
-  
+        return authContext
+    }

@@ -7,21 +7,24 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node dist/main.js",
-    "dev": "ts-node-esm src/main.ts"
+    "dev": "tsx src/main.ts"
   },
   "dependencies": {
+    "@lit-protocol/access-control-conditions": "^8.0.2",
+    "@lit-protocol/auth": "^8.2.3",
+    "@lit-protocol/auth-helpers": "^8.2.1",
+    "@lit-protocol/constants": "^8.0.8",
+    "@lit-protocol/encryption": "^7.4.0",
+    "@lit-protocol/lit-client": "^8.3.1",
+    "@lit-protocol/networks": "8.4.1",
+    "@s2s/soul2soul-shared": "link:../s2s-shared",
     "dotenv": "^16.4.7",
-    "ethers5": "npm:ethers@^5.8.0",
-    "@lit-protocol/auth-helpers": "7.1.0",
-		"@lit-protocol/constants": "7.1.0",
-		"@lit-protocol/contracts-sdk": "7.1.0",
-		"@lit-protocol/encryption": "^7.1.0",
-		"@lit-protocol/lit-node-client": "7.1.0",
-		"@lit-protocol/types": "^7.1.0"
+    "viem": "^2.45.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "ts-node": "^10.9.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0"
   }
 }

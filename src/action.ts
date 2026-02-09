@@ -1,70 +1,45 @@
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import { ILitNodeClient, SessionSigs } from "@lit-protocol/types";
-import { fetchByQuery } from './lens.factory.js';
-import { decrypt } from './decrypt.js';
-import { _collections } from './mock.js';
+export const runAction = async (
+  client: any, 
+  authContext: any, 
+  encryptedData: any, 
+  accs: any
+) => {
 
-export const runAction = async (client: LitNodeClient | ILitNodeClient, sessionSigs: SessionSigs) => {
-
-  const publicationModule = "0xe0b8658be3b91879A187752EbEec620e3eEF4140"
-  const authorSafeAddress = "0x04660132323Fe65C5BaF9107Cfe8a941386b4EAF"
-
-  const posts = [
-    {
-      "id": "40562519930711800002437190761203007696652774457975046221921023827422170191994",
-      "author": "0x60128b8f7c708Db46EA3F8D06932D6E621978072",
-      "content": "{\"ciphertext\":\"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\",\"dataToEncryptHash\":\"6f213678d7274ec21d8d7b5f0121a4d9411e1920a610f02afe9c56f378a426b8\"}",
-      "locale": "nl",
-      "parent": "0",
-      "position": "0",
-      "postType": "post",
-      "creationDate": "1761727877",
-      "modifiedDate": "1763460664",
-      "tags": ["block001--s2s"]
-    },
-    {
-      "id": "64617781492805189701009480879149674604176067592032061274064038052630522871262",
-      "author": "0x60128b8f7c708Db46EA3F8D06932D6E621978072",
-      "content": "{\"ciphertext\":\"kz3m6w3zv/jHIN1C/bVT0j0BmnklpFOHrcmlxjNPzNVNPsyrMnEFc58VAr1GMMeUYN3T0CSdFlGoawNgq/fNgIwrCwQZh9vJolcgExAKUHZdLVXzGNBmmyaCh3zWzA0daMtxhVy8vJ30c4BBonKwHO4qaBWR96WQOV/GWvErhkr4Dvo3ke9je8qW7X53z5Dp/K3uJZg6xkyL5Akuo5gzOWpDfm5ydYOGC9qYPl3pAg==\",\"dataToEncryptHash\":\"75abba00d97533cd4a97905479658dd03f4eedecbdf776d5e65ca2d584701f1a\"}",
-      "locale": "nl",
-      "parent": "0",
-      "position": "0",
-      "postType": "home",
-      "creationDate": "1763024996",
-      "modifiedDate": "1763384870",
-      "tags": ["block001--s2s"]
-    }
-  ]
-  
   const code = `(async () => {
-    const fetchByQuery = ${fetchByQuery.toString()};
-    const decrypt = ${decrypt.toString()};
-    const posts = ${JSON.stringify(posts)}
 
-    let decrypted = [];
-
-    for (let result of posts) {
-          const d = await decrypt(result, "${publicationModule}", "${authorSafeAddress}");
-          if (d != undefined) {
-                decrypted.push(d);
-          }
-          // await new Promise(resolve => setTimeout(resolve, index * 1000));
+    const { accs, ciphertext, dataToEncryptHash } = jsParams;
+    
+    const decryptionParams = {
+      accessControlConditions: accs,
+      ciphertext: ciphertext,
+      dataToEncryptHash: dataToEncryptHash,
+      authSig: null,
+      chain: "base",
     };
 
-    let titles = decrypted.map( d => d === null ? null : d.title);
+    console.log("Auth context user:", Lit.Auth);
 
-    console.log(titles);
+    const decrypted = await Lit.Actions.decryptAndCombine(decryptionParams);
 
-    Lit.Actions.setResponse({ response: JSON.stringify({ titles }) });
-
+    Lit.Actions.setResponse({ 
+      response: JSON.stringify({ decrypted }) 
+    });
   })();`;
+
+
+  // console.log(authContext);
   
   const res = await client.executeJs({
-      code: code, // Pass the string directly, not JSON.stringify
-      sessionSigs: sessionSigs,
-      jsParams: {}
+    code: code, 
+    authContext,
+    jsParams: {
+      accs: accs,
+      ciphertext: encryptedData.ciphertext,
+      dataToEncryptHash: encryptedData.dataToEncryptHash
+    }
   });
   
   console.log("result from lit action:", res);
-
+  
+  return res;
 }
